@@ -161,19 +161,19 @@ class AlternatingLeastSquares(RecommenderBase):
 
     def _fit_gpu(self, Ciu_host, Cui_host):
         """ specialized training on the gpu. copies inputs to/from cuda device """
-        import implicit.cuda
+        from implicit.cuda import _cuda
         if self.dtype == np.float64:
             log.warning("Factors of dtype float64 aren't supported with gpu fitting. "
                         "Converting factors to float32")
             self.item_factors = self.item_factors.astype(np.float32)
             self.user_factors = self.user_factors.astype(np.float32)
 
-        Ciu = implicit.cuda.CuCSRMatrix(Ciu_host)
-        Cui = implicit.cuda.CuCSRMatrix(Cui_host)
-        X = implicit.cuda.CuDenseMatrix(self.user_factors.astype(np.float32))
-        Y = implicit.cuda.CuDenseMatrix(self.item_factors.astype(np.float32))
+        Ciu = _cuda.CuCSRMatrix(Ciu_host)
+        Cui = _cuda.CuCSRMatrix(Cui_host)
+        X = _cuda.CuDenseMatrix(self.user_factors.astype(np.float32))
+        Y = _cuda.CuDenseMatrix(self.item_factors.astype(np.float32))
 
-        solver = implicit.cuda.CuLeastSquaresSolver(self.factors)
+        solver = _cuda.CuLeastSquaresSolver(self.factors)
 
         for iteration in range(self.iterations):
             s = time.time()
